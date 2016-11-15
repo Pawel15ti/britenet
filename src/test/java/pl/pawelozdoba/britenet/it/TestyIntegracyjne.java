@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import pl.pawelozdoba.britenet.domain.RodzajMuzyki;
+import pl.pawelozdoba.britenet.service.AlbumService;
 import pl.pawelozdoba.britenet.service.RodzajMuzykiService;
 
 @RunWith(SpringRunner.class)
@@ -19,6 +20,9 @@ public class TestyIntegracyjne {
 	@Autowired
 	private RodzajMuzykiService rodzajMuzykiService;
 	
+	@Autowired
+	private AlbumService albumService;
+	
 	@Test
 	public void znajdzRodzajMuzyki(){
 		
@@ -27,6 +31,13 @@ public class TestyIntegracyjne {
 			System.out.println(rodzajMuzyki);
 		}
 			
+	}
+	
+	@Test
+	public void utworzAlbum(){
+		
+		
+		
 	}
 	
 }

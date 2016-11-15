@@ -17,7 +17,7 @@ public class Wykonawca {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@Size.List({
-		@Size(max = 20,message="nazwa nie może zawierać więcej niż {max} znaków"),
+		@Size(max = 60,message="nazwa nie może zawierać więcej niż {max} znaków"),
 		@Size(min = 1,message="nazwa musi zawierać {min} znaków")
 	})
 	@NotNull(message="nazwa jest wymagana")
@@ -28,6 +28,17 @@ public class Wykonawca {
 
 	public Wykonawca() {
 		super();
+	}
+	
+	public Wykonawca(String nazwa){
+		this.nazwa = nazwa;
+	}
+
+	
+	public Wykonawca(Integer id, String nazwa) {
+		super();
+		this.id = id;
+		this.nazwa = nazwa;
 	}
 
 	@Override

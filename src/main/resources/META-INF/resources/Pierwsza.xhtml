@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>.:: Pierwsza strona ::.</title>
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+</h:head>
+
+<h:body>
+	<h:form>
+	<h:panelGrid columns="3">
+		<p:commandButton value="Dodaj nowy" icon="ui-icon-circle-plus" onclick="PF('dodaj').show();" type="button"/>
+
+		
+
+		<p:commandButton value="With Icon" icon="ui-icon-star"/>
+
+		
+
+		<p:commandButton icon="ui-icon-star" title="Icon Only"/>
+
+		
+	</h:panelGrid>
+	
+	
+	<p:dataTable var="albumService"
+		value="#{pierwszaControll.albumService}">
+		<p:column headerText="Id">
+			<h:outputText value="#{albumService.id}" />
+		</p:column>
+
+		<p:column headerText="Tytul2">
+			<h:outputText value="#{albumService.tytul}" />
+		</p:column>
+
+		<p:column headerText="Wykonawca">
+			<h:outputText value="#{pierwszaControll.albumService.wykonawca}" />
+		</p:column>
+
+
+	</p:dataTable>
+	</h:form>
+	
+	<p:dialog header="Basic Dialog" widgetVar="dodaj" minHeight="40" modal="true">
+		<h:form>
+			<p:messages/>
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Tytuł" for="tytul"/>
+				<p:inputText id="tytul" value="#{pierwszaControll.album.tytul}" />
+				
+				<p:outputLabel value="Wykonawca" for="wykonawca"/>
+				<p:autoComplete id="wykonawca" value="#{pierwszaControll.album.wykonawca}" completeMethod="#{pierwszaControll.listaWykonawcy}" var="wykonawca" itemLabel="#{wykonawca.nazwa}" itemValue="#{wykonawca}" converter="wykonawcaKonwerter" />
+			</h:panelGrid>
+			
+			<p:commandButton value="Utworz" action="#{pierwszaControll.utworz()}" ajax="true" update="@form" process="@form" />
+		</h:form>
+	</p:dialog>
+
+</h:body>
+
+</html>
