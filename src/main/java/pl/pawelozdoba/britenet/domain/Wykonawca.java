@@ -66,9 +66,11 @@ public class Wykonawca {
 		return true;
 	}
 
+	
+
 	@Override
 	public String toString() {
-		return "Wykonawca [nazwa=" + nazwa + "]";
+		return "Wykonawca [id=" + id + ", nazwa=" + nazwa + "]";
 	}
 
 	public String getNazwa() {

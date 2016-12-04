@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -20,12 +20,29 @@ public class RodzajMuzyki {
 	@Column(unique=true)
 	@Size(max = 20)
 	private String nazwa;
-	@OneToMany(mappedBy = "rodzajMuzyki")
+	@ManyToMany(mappedBy = "rodzajMuzyki")
 	private List<Album> albumy;
 
 	public RodzajMuzyki() {
 		super();
 	}
+	
+	
+
+	public RodzajMuzyki(String nazwa) {
+		super();
+		this.nazwa = nazwa;
+	}
+
+
+
+	public RodzajMuzyki(Integer id, String nazwa) {
+		super();
+		this.id = id;
+		this.nazwa = nazwa;
+	}
+
+
 
 	@Override
 	public String toString() {

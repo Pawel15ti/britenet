@@ -17,6 +17,7 @@ insert into rodzaj_muzyki(nazwa)values('Hardstyle');
 insert into rodzaj_muzyki(nazwa)values('Hard house');
 insert into rodzaj_muzyki(nazwa)values('Rap');
 insert into rodzaj_muzyki(nazwa)values('Techno');
+insert into rodzaj_muzyki(nazwa)values('');
 insert into wykonawca(nazwa)values('Adele');
 insert into wykonawca(nazwa)values('Coma');
 insert into wykonawca(nazwa)values('Dzem');

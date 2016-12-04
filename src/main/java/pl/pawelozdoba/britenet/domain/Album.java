@@ -1,16 +1,22 @@
 package pl.pawelozdoba.britenet.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 @Entity
 public class Album {
 	@Id
@@ -22,15 +28,15 @@ public class Album {
 	})
 	@NotNull(message="tytuł jest wymagany")
 	private String tytul;
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name= "wykonawca_id")
 	@NotNull(message="wykonawca jest wymagany")
 	private Wykonawca wykonawca;
-	@ManyToOne
-	@JoinColumn(name = "rodzaj_muzyki_id")
-	
+	@ManyToMany(fetch=FetchType.EAGER)
+	//@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="album_rodzaj_muzyki", joinColumns=@JoinColumn(name="album_id"), inverseJoinColumns=@JoinColumn(name = "rodzaj_muzyki_id"))
 	@NotNull(message="rodzaj Muzyki jest wymagany")
-	private RodzajMuzyki rodzajMuzyki;
+	private List<RodzajMuzyki> rodzajMuzyki;
 	
 	@Size.List({
 		@Size(max = 1000, message="wykonawcy nie mogą zawierać więcej niż {max} znaków"),
@@ -38,10 +44,10 @@ public class Album {
 	})
 	@NotNull(message="wykonawca jest wymagany")
 	private String wykonawcy;
-	@OneToMany(mappedBy="album")
+	@OneToMany(mappedBy="album", cascade=CascadeType.ALL)
 	private List<WydanieAlbumu> wydaniaAlbumu;
 	
-	@OneToMany(mappedBy="album")
+	@OneToMany(mappedBy="album",  cascade=CascadeType.ALL)
 	private List<Sciezka> sciezki;
 	
 	
@@ -49,7 +55,42 @@ public class Album {
 	public Album() {
 		super();
 	}
+//	public Album(String tytul,Wykonawca wykonawca, RodzajMuzyki rodzajMuzyki, String wykonawcy)
+//	{
+//		super();
+//		this.tytul=tytul;
+//		this.wykonawca=wykonawca;
+//		this.rodzajMuzyki=(List<RodzajMuzyki>) rodzajMuzyki;
+//		this.wykonawcy=wykonawcy;
+//	}
 	
+	public void dodajRodzajMuzyki(RodzajMuzyki rodzaj){
+		
+		if(rodzajMuzyki == null)
+		
+			rodzajMuzyki = new ArrayList<>();
+		
+		rodzajMuzyki.add(rodzaj);
+	}
+	
+	public void dodajSciezka(Sciezka sciezka){
+		if(sciezki == null)
+		{
+			sciezki = new ArrayList<>();
+		}
+		sciezki.add(sciezka);
+		sciezka.setAlbum(this);
+	}
+	
+	
+	public void dodajWydanie(WydanieAlbumu wydanieAlbumu){
+		if(wydaniaAlbumu == null)
+		{
+			wydaniaAlbumu = new ArrayList<>();
+		}
+		wydaniaAlbumu.add(wydanieAlbumu);
+		wydanieAlbumu.setAlbum(this);
+	}
 	
 	@Override
 	public int hashCode() {
@@ -96,10 +137,10 @@ public class Album {
 	public void setWykonawca(Wykonawca wykonawca) {
 		this.wykonawca = wykonawca;
 	}
-	public RodzajMuzyki getRodzajMuzyki() {
+	public List<RodzajMuzyki> getRodzajMuzyki() {
 		return rodzajMuzyki;
 	}
-	public void setRodzajMuzyki(RodzajMuzyki rodzajMuzyki) {
+	public void setRodzajMuzyki(List<RodzajMuzyki> rodzajMuzyki) {
 		this.rodzajMuzyki = rodzajMuzyki;
 	}
 	public String getWykonawcy() {

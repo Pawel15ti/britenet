@@ -12,4 +12,11 @@ public interface AlbumService {
 	Album znajdz(Integer id);
 	List<Album> znajdzWszystkie();
 	List<Album> znajdzWszystkie(RodzajMuzyki rodzajMuzyki,Short rok, String wykonawcy);
+	
+	//
+	Album findByTytul(String tytul);
+	List<Album> znajdzWedlugWykonawcy(String wykonawcy);
+	List<Album> znajdzWedlugRoku(Integer rok);
+	List<Album> znajdzWedlugRodzajuMuzyki(RodzajMuzyki rodzajMuzyki);
+	
 }

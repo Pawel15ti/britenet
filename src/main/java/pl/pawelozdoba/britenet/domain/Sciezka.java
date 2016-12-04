@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -33,6 +34,8 @@ public class Sciezka {
 	@NotNull(message="album jest wymagany")
 	private Album album;
 	
+	@Transient
+	private Integer numer;
 	
 	public Sciezka() {
 		super();
@@ -112,5 +115,19 @@ public class Sciezka {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+
+
+	public Integer getNumer() {
+		return numer;
+	}
+
+
+
+	public void setNumer(Integer numer) {
+		this.numer = numer;
+	}
+	
+	
 
 }

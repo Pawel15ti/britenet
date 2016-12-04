@@ -11,55 +11,441 @@
 </h:head>
 
 <h:body>
-	<h:form>
-	<h:panelGrid columns="3">
-		<p:commandButton value="Dodaj nowy" icon="ui-icon-circle-plus" onclick="PF('dodaj').show();" type="button"/>
-
-		
-
-		<p:commandButton value="With Icon" icon="ui-icon-star"/>
-
-		
-
-		<p:commandButton icon="ui-icon-star" title="Icon Only"/>
-
-		
-	</h:panelGrid>
-	
-	
-	<p:dataTable var="albumService"
-		value="#{pierwszaControll.albumService}">
-		<p:column headerText="Id">
-			<h:outputText value="#{albumService.id}" />
-		</p:column>
-
-		<p:column headerText="Tytul2">
-			<h:outputText value="#{albumService.tytul}" />
-		</p:column>
-
-		<p:column headerText="Wykonawca">
-			<h:outputText value="#{pierwszaControll.albumService.wykonawca}" />
-		</p:column>
+	<h:form id="form1">
+		<h:panelGrid columns="9">
 
 
-	</p:dataTable>
+			<p:outputLabel for="rodzaj" value="Rodzaj Muzyki " />
+
+			<p:selectOneMenu id="rodzaj"
+				value="#{pierwszaControll.filtrRodzajMuzyki}"
+				converter="rodzajMuzykiKonwerter">
+				<f:selectItem itemLabel="wszystkie" itemValue="#{null}"></f:selectItem>
+				<f:selectItems id="rodzajM"
+					value="#{pierwszaControll.rodzajeMuzyki}" var="rodzaj"
+					itemLabel="#{rodzaj.nazwa}" itemValue="#{rodzaj}" />
+
+
+			</p:selectOneMenu>
+			<p:outputLabel value="Wykonawcy" for="wykonawcy" />
+
+			<p:inputText id="wykonawcy"
+				value="#{pierwszaControll.filtrWykonawcy}" />
+
+			<p:outputLabel value="Rok" for="rok" />
+
+			<ui:remove>
+				<p:spinner id="rok" value="#{pierwszaControll.filtrRok}"
+					stepFactor="1" max="2020" min="1900" />
+			</ui:remove>
+
+			<p:selectOneMenu id="rok" value="#{pierwszaControll.filtrRok}">
+				<f:selectItem itemLabel="wszystkie" itemValue="#{null}"></f:selectItem>
+				<f:selectItems value="#{pierwszaControll.rokZasieg2}" />
+			</p:selectOneMenu>
+
+
+			<p:commandButton value="Szukaj" icon="ui-icon-search"
+				action="#{pierwszaControll.filtruj()}"
+				update="@form :form:listaALbumy" process="@form" />
+			<p:commandButton value="Resetuj" icon="ui-icon-search"
+				action="#{pierwszaControll.resetFiltrow}"
+				update="@form :form:listaALbumy" process="@form" />
+		</h:panelGrid>
 	</h:form>
-	
-	<p:dialog header="Basic Dialog" widgetVar="dodaj" minHeight="40" modal="true">
-		<h:form>
-			<p:messages/>
-			<h:panelGrid columns="2">
-				<p:outputLabel value="Tytuł" for="tytul"/>
-				<p:inputText id="tytul" value="#{pierwszaControll.album.tytul}" />
-				
-				<p:outputLabel value="Wykonawca" for="wykonawca"/>
-				<p:autoComplete id="wykonawca" value="#{pierwszaControll.album.wykonawca}" completeMethod="#{pierwszaControll.listaWykonawcy}" var="wykonawca" itemLabel="#{wykonawca.nazwa}" itemValue="#{wykonawca}" converter="wykonawcaKonwerter" />
-			</h:panelGrid>
-			
-			<p:commandButton value="Utworz" action="#{pierwszaControll.utworz()}" ajax="true" update="@form" process="@form" />
+
+
+	<h:form id="form">
+		<h:panelGrid columns="3">
+			<p:commandButton value="Dodaj nowy" icon="ui-icon-circle-plus"
+				action="#{pierwszaControll.inicjujAlbum()}"
+				onclick="PF('dodaj').show();" process="@this"
+				update=":dodajAlbumPopup" />
+
+
+
+			<p:commandButton id="edytujBtn" value="Edytuj" icon="ui-icon-minus" action="#{pierwszaControll.inicjujAlbumEdycja()}"
+				onclick="PF('edytuj').show();" process="@this" update=":edytujAlbumPopup" disabled="#{pierwszaControll.edytujButtonDisabled}" />
+
+			<p:commandButton value="Podglad" icon="ui-icon-search"
+				onclick="PF('podglad').show();" type="button" />
+
+
+		</h:panelGrid>
+
+
+		<p:dataTable id="listaALbumy" value="#{pierwszaControll.albumy}" var="album" selectionMode="single" selection="#{pierwszaControll.zaznaczonyAlbum}" rowKey="#{album.id}">
+			<p:ajax event="rowSelect"  update="form:edytujBtn" />
+        	<p:ajax event="rowUnselect"  update="form:edytujBtn" />
+			<p:column headerText="Id">
+				<h:outputText value="#{album.id}" />
+			</p:column>
+
+			<p:column headerText="Tytuł albumu">
+				<h:outputText value="#{album.tytul}" />
+			</p:column>
+
+			<p:column headerText="Wykonawca">
+				<h:outputText value="#{album.wykonawca.nazwa}" />
+			</p:column>
+			<p:column headerText="Rodzaj muzyki">
+				<h:outputText value="#{album.rodzajMuzyki}" />
+			</p:column>
+
+
+		</p:dataTable>
+	</h:form>
+
+	<p:dialog header="Basic Dialog" widgetVar="dodaj" minHeight="40"
+		modal="true">
+		<h:form id="dodajAlbumPopup">
+			<h:inputHidden id="sukces"
+				value="#{pierwszaControll.dodajAlbumSukces}" />
+			<p:messages />
+			<p:panel header="Dane podstawowe">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Tytuł" for="tytul" />
+					<p:inputText id="tytul" value="#{pierwszaControll.album.tytul}" />
+
+					<p:outputLabel value="Rodzaj muzyki" for="rodzajMuzyki" />
+					<p:autoComplete id="rodzajMuzyki" multiple="true"
+						value="#{pierwszaControll.album.rodzajMuzyki}"
+						completeMethod="#{pierwszaControll.listaRodzajMuzyki}"
+						var="rodzajMuzyki" itemLabel="#{rodzajMuzyki.nazwa}"
+						forceSelection="true" itemValue="#{rodzajMuzyki}"
+						converter="rodzajMuzykiKonwerter" />
+
+
+					<p:outputLabel value="Wykonawca" for="wykonawca" />
+					<p:autoComplete id="wykonawca"
+						value="#{pierwszaControll.album.wykonawca}"
+						completeMethod="#{pierwszaControll.listaWykonawcy}"
+						var="wykonawca" itemLabel="#{wykonawca.nazwa}"
+						itemValue="#{wykonawca}" converter="wykonawcaKonwerter">
+
+
+					</p:autoComplete>
+
+					<p:outputLabel value="Wykonawcy" for="wykonawcy" />
+					<p:inputTextarea rows="6" cols="100" id="wykonawcy"
+						value="#{pierwszaControll.album.wykonawcy}" />
+
+				</h:panelGrid>
+
+			</p:panel>
+
+			<p:panel header="Wydania">
+				<h:panelGrid columns="3">
+					<p:commandButton value="Dodaj" icon="ui-icon-circle-plus"
+						action="#{pierwszaControll.inicjujAlbumWydanie()}"
+						onclick="PF('wydanie-dodaj').show();" update=":wydanieDodajPopup"
+						process="@this" />
+
+					<p:commandButton value="Edytuj" icon="ui-icon-minus"
+						onclick="PF('edytuj').show();" type="button" />
+					<p:commandButton value="Podglad" icon="ui-icon-search"
+						onclick="PF('podglad').show();" type="button" />
+				</h:panelGrid>
+				<p:dataTable id="wydanieAlbumu"
+					value="#{pierwszaControll.album.wydaniaAlbumu}" var="wydanieAlbumu"
+					style="width:900px;">
+
+
+					<p:column headerText="Kraj">
+						<h:outputText value="#{wydanieAlbumu.kraj}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Wydawca">
+						<h:outputText value="#{wydanieAlbumu.wydawca}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Rok">
+						<h:outputText value="#{wydanieAlbumu.rok}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Medium">
+						<h:outputText value="#{wydanieAlbumu.medium}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Opis">
+						<h:outputText value="#{wydanieAlbumu.opis}">
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:panel header="Sciezki">
+
+				<h:panelGrid columns="3">
+					<p:commandButton value="Dodaj" icon="ui-icon-circle-plus"
+						action="#{pierwszaControll.inicjujSciezke()}"
+						onclick="PF('sciezka-dodaj').show();" update=":sciezkaDodajPopup"
+						process="@this" />
+
+
+
+					<p:commandButton value="Edytuj" icon="ui-icon-minus"
+						onclick="PF('edytuj').show();" type="button" />
+					<p:commandButton value="Podglad" icon="ui-icon-search"
+						onclick="PF('podglad').show();" type="button" />
+				</h:panelGrid>
+				<p:dataTable id="sciezki" value="#{pierwszaControll.album.sciezki}"
+					var="sciezka" style="width:900px;">
+					<p:column headerText="Tytuł">
+						<h:outputText value="#{sciezka.tytul}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Czas trwania">
+						<h:outputText value="#{sciezka.czas}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Kolejnosc w albumie">
+						<h:outputText value="#{sciezka.pozycja}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Informacje tekstowe">
+						<h:outputText value="#{sciezka.informacje}">
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:commandButton value="Utworz" action="#{pierwszaControll.utworz()}"
+				ajax="true" update="@form :form:listaALbumy" process="@form"
+				oncomplete="if(document.getElementById('dodajAlbumPopup:sukces').value=='true'){ PF(('dodaj').show()').hide(); }" />
+
+
 		</h:form>
 	</p:dialog>
 
+	<p:dialog header="Basic Dialog" widgetVar="edytuj" minHeight="40" modal="true">
+		<h:form id="edytujAlbumPopup">
+			<h:inputHidden id="sukces"
+				value="#{pierwszaControll.edytujAlbumSukces}" />
+			<p:messages />
+			<p:panel header="Dane podstawowe">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Tytuł" for="tytul" />
+					<p:inputText id="tytul" value="#{pierwszaControll.albumEdycja.tytul}" />
+
+					<p:outputLabel value="Rodzaj muzyki" for="rodzajMuzyki" />
+					<p:autoComplete id="rodzajMuzyki" multiple="true"
+						value="#{pierwszaControll.albumEdycja.rodzajMuzyki}"
+						completeMethod="#{pierwszaControll.listaRodzajMuzyki}"
+						var="rodzajMuzyki" itemLabel="#{rodzajMuzyki.nazwa}"
+						forceSelection="true" itemValue="#{rodzajMuzyki}"
+						converter="rodzajMuzykiKonwerter" />
+
+
+					<p:outputLabel value="Wykonawca" for="wykonawca" />
+					<p:autoComplete id="wykonawca"
+						value="#{pierwszaControll.albumEdycja.wykonawca}"
+						completeMethod="#{pierwszaControll.listaWykonawcy}"
+						var="wykonawca" itemLabel="#{wykonawca.nazwa}"
+						itemValue="#{wykonawca}" converter="wykonawcaKonwerter">
+
+
+					</p:autoComplete>
+
+					<p:outputLabel value="Wykonawcy" for="wykonawcy" />
+					<p:inputTextarea rows="6" cols="100" id="wykonawcy"
+						value="#{pierwszaControll.albumEdycja.wykonawcy}" />
+
+				</h:panelGrid>
+
+			</p:panel>
+
+			<p:panel header="Wydania">
+				<h:panelGrid columns="3">
+					<p:commandButton value="Dodaj" icon="ui-icon-circle-plus"
+						action="#{pierwszaControll.inicjujAlbumWydanie()}"
+						onclick="PF('wydanie-dodaj').show();" update=":wydanieDodajPopup"
+						process="@this" />
+
+					<p:commandButton value="Edytuj" icon="ui-icon-minus"
+						onclick="PF('edytuj').show();" type="button" />
+					<p:commandButton value="Podglad" icon="ui-icon-search"
+						onclick="PF('podglad').show();" type="button" />
+				</h:panelGrid>
+				<p:dataTable id="wydanieAlbumu"
+					value="#{pierwszaControll.albumEdycja.wydaniaAlbumu}" var="wydanieAlbumu"
+					style="width:900px;">
+
+
+					<p:column headerText="Kraj">
+						<h:outputText value="#{wydanieAlbumu.kraj}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Wydawca">
+						<h:outputText value="#{wydanieAlbumu.wydawca}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Rok">
+						<h:outputText value="#{wydanieAlbumu.rok}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Medium">
+						<h:outputText value="#{wydanieAlbumu.medium}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Opis">
+						<h:outputText value="#{wydanieAlbumu.opis}">
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:panel header="Sciezki">
+
+				<h:panelGrid columns="3">
+					<p:commandButton value="Dodaj" icon="ui-icon-circle-plus"
+						action="#{pierwszaControll.inicjujSciezke()}"
+						onclick="PF('sciezka-dodaj-edycja').show();" update=":sciezkaDodajPopupEdycja"
+						process="@this" />
+
+
+
+					<p:commandButton value="Edytuj" icon="ui-icon-minus"
+						onclick="PF('edytuj').show();" type="button" />
+					<p:commandButton value="Podglad" icon="ui-icon-search"
+						onclick="PF('podglad').show();" type="button" />
+				</h:panelGrid>
+				<p:dataTable id="sciezki" value="#{pierwszaControll.albumEdycja.sciezki}"
+					var="sciezka" style="width:900px;">
+					<p:column headerText="Tytuł">
+						<h:outputText value="#{sciezka.tytul}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Czas trwania">
+						<h:outputText value="#{sciezka.czas}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Kolejnosc w albumie">
+						<h:outputText value="#{sciezka.pozycja}">
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Informacje tekstowe">
+						<h:outputText value="#{sciezka.informacje}">
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:commandButton value="Zapisz" action="#{pierwszaControll.edytuj()}"
+				ajax="true" update="@form :form:listaALbumy" process="@form"
+				oncomplete="if(document.getElementById('edytujAlbumPopup:sukces').value=='true'){ PF(('edytuj').show()').hide(); }" />
+
+
+		</h:form>
+	</p:dialog>
+
+
+	<p:dialog header="Basic Dialog" widgetVar="podglad" minHeight="40"
+		modal="true">
+
+	</p:dialog>
+
+
+	<p:dialog header="Basic Dialog" widgetVar="sciezka-dodaj"
+		minHeight="40" modal="true">
+		<h:form id="sciezkaDodajPopup">
+			<h:inputHidden id="sukces"
+				value="#{pierwszaControll.dodajSciezkaSukces}" />
+			<h:messages />
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Tytuł" for="tytul" />
+				<p:inputText id="tytul" value="#{pierwszaControll.sciezka.tytul}" />
+				<p:outputLabel value="Czas" for="czas" />
+
+
+				<p:spinner id="czas" value="#{pierwszaControll.sciezka.czas}"
+					stepFactor="1" max="6000" min="1" />
+
+				<p:outputLabel value="Pozycja" for="pozycja" />
+				<p:spinner id="pozycja" value="#{pierwszaControll.sciezka.pozycja}"
+					min="1" max="55" />
+
+				<p:outputLabel value="Informacje" for="informacje" />
+				<p:inputTextarea rows="6" cols="100" id="informacje"
+					value="#{pierwszaControll.sciezka.informacje}" />
+
+			</h:panelGrid>
+			<p:commandButton value="Utworz"
+				action="#{pierwszaControll.dodajSciezke()}" ajax="true"
+				update="@form :dodajAlbumPopup:sciezki" process="@form"
+				oncomplete="if(document.getElementById('sciezkaDodajPopup:sukces').value=='true'){ PF('sciezka-dodaj').hide(); }" />
+
+		</h:form>
+	</p:dialog>
+	
+	
+	<p:dialog header="Basic Dialog" widgetVar="sciezka-dodaj-edycja"
+		minHeight="40" modal="true">
+		<h:form id="sciezkaDodajPopupEdycja">
+			<h:inputHidden id="sukces"
+				value="#{pierwszaControll.dodajSciezkaSukces}" />
+			<h:messages />
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Tytuł" for="tytul" />
+				<p:inputText id="tytul" value="#{pierwszaControll.sciezka.tytul}" />
+				<p:outputLabel value="Czas" for="czas" />
+
+
+				<p:spinner id="czas" value="#{pierwszaControll.sciezka.czas}"
+					stepFactor="1" max="6000" min="1" />
+
+				<p:outputLabel value="Pozycja" for="pozycja" />
+				<p:spinner id="pozycja" value="#{pierwszaControll.sciezka.pozycja}"
+					min="1" max="55" />
+
+				<p:outputLabel value="Informacje" for="informacje" />
+				<p:inputTextarea rows="6" cols="100" id="informacje"
+					value="#{pierwszaControll.sciezka.informacje}" />
+
+			</h:panelGrid>
+			<p:commandButton value="Utworz"
+				action="#{pierwszaControll.dodajSciezkeEdycja()}" ajax="true"
+				update="@form :edytujAlbumPopup:sciezki" process="@form"
+				oncomplete="if(document.getElementById('sciezkaDodajPopupEdycja:sukces').value=='true'){ PF('sciezka-dodaj-edycja').hide(); }" />
+
+		</h:form>
+	</p:dialog>
+	
+
+	<p:dialog header="Basic Dialog" widgetVar="wydanie-dodaj"
+		minHeight="40" modal="true">
+		<h:form id="wydanieDodajPopup">
+			<h:inputHidden id="sukces"
+				value="#{pierwszaControll.dodajWydanieAlbumuSukces}"></h:inputHidden>
+			<h:messages />
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Kraj" for="kraj" />
+				<p:inputText id="kraj"
+					value="#{pierwszaControll.wydanieAlbumu.kraj}" />
+				<p:outputLabel value="Wydawca" for="wydawca" />
+				<p:inputText id="wydawca"
+					value="#{pierwszaControll.wydanieAlbumu.wydawca}" />
+				<p:outputLabel value="Rok" for="rok" />
+
+				<p:spinner id="rok" value="#{pierwszaControll.wydanieAlbumu.rok}"
+					min="1900" max="2016" />
+
+				<p:outputLabel value="Medium" for="medium" />
+				<p:inputText id="medium"
+					value="#{pierwszaControll.wydanieAlbumu.medium}" />
+				<p:outputLabel value="Opis" for="opis" />
+				<p:inputTextarea rows="6" cols="100" id="opis"
+					value="#{pierwszaControll.wydanieAlbumu.opis}" />
+
+			</h:panelGrid>
+			<p:commandButton value="Utworz"
+				action="#{pierwszaControll.dodajWydanie()}" ajax="true"
+				update="@form :dodajAlbumPopup:wydanieAlbumu" process="@form"
+				oncomplete="if(document.getElementById('wydanieDodajPopup:sukces').value=='true'){ PF('wydanie-dodaj').hide(); }" />
+
+
+		</h:form>
+	</p:dialog>
 </h:body>
 
 </html>
