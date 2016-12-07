@@ -94,7 +94,10 @@
 				<h:outputText value="#{album.wykonawca.nazwa}" />
 			</p:column>
 			<p:column headerText="Rodzaj muzyki">
-				<h:outputText value="#{album.rodzajMuzyki}" />
+				<ui:repeat var="rodzaj" value="#{album.rodzajMuzyki}">
+					<h:outputText value="#{rodzaj.nazwa}," />
+				</ui:repeat>
+				
 			</p:column>
 
 

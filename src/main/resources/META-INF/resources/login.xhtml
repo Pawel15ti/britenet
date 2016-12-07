@@ -23,8 +23,9 @@
 			<br />
 		
 			<label><input type="submit" value="Zaloguj" /></label>
-			<input type="hidden" name="${_csrf.parameterName}"
-				value="${_csrf.token}" />
+			<ui:remove>
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			</ui:remove>
 		</center>
 </fieldset>
 	</form>

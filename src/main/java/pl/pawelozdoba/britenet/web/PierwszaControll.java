@@ -1,8 +1,5 @@
 package pl.pawelozdoba.britenet.web;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +9,7 @@ import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.sun.faces.action.RequestMapping;
+import org.springframework.stereotype.Controller;
 
 import pl.pawelozdoba.britenet.domain.Album;
 import pl.pawelozdoba.britenet.domain.RodzajMuzyki;
@@ -25,12 +19,10 @@ import pl.pawelozdoba.britenet.domain.WydanieAlbumu;
 import pl.pawelozdoba.britenet.domain.Wykonawca;
 import pl.pawelozdoba.britenet.service.AlbumService;
 import pl.pawelozdoba.britenet.service.RodzajMuzykiService;
-
 import pl.pawelozdoba.britenet.service.WykonawcaService;
 
-
-
-@ViewScoped 
+@Named
+@ViewScoped
 public class PierwszaControll implements Serializable {
 
 	/**
@@ -53,14 +45,14 @@ public class PierwszaControll implements Serializable {
 	private List<Album> albumy;
 
 	private List<RodzajMuzyki> rodzajeMuzyki;
-	private RodzajMuzyki filtrRodzajMuzyki; 
+	private RodzajMuzyki filtrRodzajMuzyki;
 	private String filtrWykonawcy;
 	private Short filtrRok;
 	private Short filtrRok1;
 
 	private Album zaznaczonyAlbum;
 	private Album albumEdycja;
-	
+
 	@Inject
 	private AlbumService albumService;
 
@@ -78,36 +70,28 @@ public class PierwszaControll implements Serializable {
 		this.uzytkownik = uzytkownik;
 	}
 
-	
-	
 	///////////////////////////////////////////////////////////////////////////
-	
-	
-	
-	
+
 	@PostConstruct // ta funckaj wykona sie po zainicjowania obiektu kontrolera
 	public void init() {
 
 		this.albumy = albumService.znajdzWszystkie();
 		rodzajeMuzyki = rodzajMuzykiService.znajdzWszystkie();
-		
+
 	}
-	
-	public boolean isEdytujButtonDisabled(){
-		if(zaznaczonyAlbum == null)
+
+	public boolean isEdytujButtonDisabled() {
+		if (zaznaczonyAlbum == null)
 			return true;
 		else
 			return false;
 	}
 	///////////////////////////////////////////////////////////////////////////
-	
 
-public List<Album> znajdzAlbumy()
-{
-	
-	return albumService.znajdzWszystkie();
-}
+	public List<Album> znajdzAlbumy() {
 
+		return albumService.znajdzWszystkie();
+	}
 
 	public List<Wykonawca> listaWykonawcy(String tekst) {
 
@@ -115,7 +99,7 @@ public List<Album> znajdzAlbumy()
 			return new ArrayList<>();
 
 		List<Wykonawca> wykonawcy = wykonawcaService.findByNazwaStartingWith(tekst);
-		if (wykonawcy.isEmpty()) { 
+		if (wykonawcy.isEmpty()) {
 			wykonawcy.add(new Wykonawca(tekst));
 		}
 
@@ -129,37 +113,34 @@ public List<Album> znajdzAlbumy()
 			return new ArrayList<>();
 
 		List<RodzajMuzyki> lista = rodzajMuzykiService.findByNazwaStartingWith(tekst);
-		
+
 		return lista;
 
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	
+
 	public void utworz() {
-		
-		
+
 		albumService.utworz(album);
 		this.dodajAlbumSukces = true;
-		
-	}
-	
-	public void edytuj(){
-		albumService.edytuj(albumEdycja);
-		this.edytujAlbumSukces=true;
-		this.albumy=albumService.znajdzWszystkie(filtrRodzajMuzyki, filtrRok, filtrWykonawcy);
+
 	}
 
-	
-	
+	public void edytuj() {
+		albumService.edytuj(albumEdycja);
+		this.edytujAlbumSukces = true;
+		this.albumy = albumService.znajdzWszystkie(filtrRodzajMuzyki, filtrRok, filtrWykonawcy);
+	}
+
 	///////////////////////////////////////////////////////////////////////////
-	public void inicjujAlbum(){
+	public void inicjujAlbum() {
 		this.album = new Album();
 		this.album.setSciezki(new ArrayList<>());
 		this.album.setWydaniaAlbumu(new ArrayList<>());
 		this.dodajAlbumSukces = false;
 	}
-	
+
 	public void inicjujSciezke() {
 		System.out.println("inicjuje sciezka");
 		sciezka = new Sciezka();
@@ -171,22 +152,23 @@ public List<Album> znajdzAlbumy()
 		wydanieAlbumu = new WydanieAlbumu();
 		dodajWydanieAlbumuSukces = false;
 	}
-	
-	public void inicjujAlbumEdycja(){
+
+	public void inicjujAlbumEdycja() {
 		Integer id = zaznaczonyAlbum.getId();
 		albumEdycja = albumService.znajdz(id);
-		this.edytujAlbumSukces =  false;
+		this.edytujAlbumSukces = false;
 	}
 
 	public void dodajSciezke() {
 		// Dodaje do albumu sciezke
-		album.dodajSciezka(sciezka);;
+		album.dodajSciezka(sciezka);
+		;
 		// czyszcze pole sciezka w kontrolrze
 		sciezka = null;
 		dodajSciezkaSukces = true;
 		System.out.println("Dodano sciezke");
 	}
-	
+
 	public void dodajSciezkeEdycja() {
 		// Dodaje do albumu sciezke
 		this.albumEdycja.dodajSciezka(sciezka);
@@ -196,7 +178,6 @@ public List<Album> znajdzAlbumy()
 		System.out.println("Dodano sciezke");
 	}
 
-	
 	public void dodajWydanieEdycja() {
 		// Dodaje do albumu wydanie
 		// album.getWydaniaAlbumu().add(wydanieAlbumu);
@@ -218,33 +199,32 @@ public List<Album> znajdzAlbumy()
 		dodajWydanieAlbumuSukces = true;
 		System.out.println("Dodano wydanie");
 	}
+
 	public void resetFiltrow() {
-		System.out.println("wykonawcy=" + filtrWykonawcy+" rok="+filtrRok+" rok1="+filtrRok1+" rodzaj="+filtrRodzajMuzyki);
-		filtrRodzajMuzyki=null;
-		filtrRok=null;
-		filtrWykonawcy=null;
-		
+		System.out.println("wykonawcy=" + filtrWykonawcy + " rok=" + filtrRok + " rok1=" + filtrRok1 + " rodzaj="
+				+ filtrRodzajMuzyki);
+		filtrRodzajMuzyki = null;
+		filtrRok = null;
+		filtrWykonawcy = null;
+
 		this.albumy = albumService.znajdzWszystkie(filtrRodzajMuzyki, filtrRok, filtrWykonawcy);
 	}
-	
 
 	public void filtruj() {
-		System.out.println("wykonawcy=" + filtrWykonawcy+" rok="+filtrRok+" rok1="+filtrRok1+" rodzaj="+filtrRodzajMuzyki);
+		System.out.println("wykonawcy=" + filtrWykonawcy + " rok=" + filtrRok + " rok1=" + filtrRok1 + " rodzaj="
+				+ filtrRodzajMuzyki);
 		this.albumy = albumService.znajdzWszystkie(filtrRodzajMuzyki, filtrRok, filtrWykonawcy);
 	}
 
-	
-	public List<Short> getRokZasieg2(){
+	public List<Short> getRokZasieg2() {
 		short start = 1901;
 		short end = 2016;
-		
-		
-		List<Short> lata=new ArrayList<>();
-		for(int i=start;i<=end;i++)
-		{
-			lata.add((short)i);
+
+		List<Short> lata = new ArrayList<>();
+		for (int i = start; i <= end; i++) {
+			lata.add((short) i);
 		}
-		
+
 		return lata;
 	}
 
@@ -377,8 +357,5 @@ public List<Album> znajdzAlbumy()
 	public void setEdytujAlbumSukces(boolean edytujAlbumSukces) {
 		this.edytujAlbumSukces = edytujAlbumSukces;
 	}
-
-	
-
 
 }
