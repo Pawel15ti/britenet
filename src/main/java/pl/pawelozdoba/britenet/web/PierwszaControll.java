@@ -1,5 +1,8 @@
 package pl.pawelozdoba.britenet.web;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,11 @@ import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.sun.faces.action.RequestMapping;
+
 import pl.pawelozdoba.britenet.domain.Album;
 import pl.pawelozdoba.britenet.domain.RodzajMuzyki;
 import pl.pawelozdoba.britenet.domain.Sciezka;
@@ -17,16 +25,12 @@ import pl.pawelozdoba.britenet.domain.WydanieAlbumu;
 import pl.pawelozdoba.britenet.domain.Wykonawca;
 import pl.pawelozdoba.britenet.service.AlbumService;
 import pl.pawelozdoba.britenet.service.RodzajMuzykiService;
-import pl.pawelozdoba.britenet.service.UzytkownikService;
+
 import pl.pawelozdoba.britenet.service.WykonawcaService;
 
-//jezeli uzytkownik wchodzi na strone na ktorej jest odwolanie do kontrolera np #{nazwaKontrolera...} - to JSF tworzy kontroler
-//1 - Wywolanie konstruktora bez argumentowego
-//2- JSF wszykuje zaleznosci (sprawdza ktore pole ma adnotacje @Inject i wyszukuje taki kontroler lub wartosc w kontekscie JSF a jak nie znajdzie to w kontekscie Springa )
-//3 -Jezli jest metoda z adnotacja PostConstructor to ją wywoluje 
-@Named // tworzy kontroler w JSF o nazwie "pierwszaControll"
-@ViewScoped // zasieg kontrolera - viewScoped do momentu kiedy uzytkownik nie
-			// zmieni strony
+
+
+@ViewScoped 
 public class PierwszaControll implements Serializable {
 
 	/**
@@ -48,12 +52,8 @@ public class PierwszaControll implements Serializable {
 	private boolean edytujAlbumSukces;
 	private List<Album> albumy;
 
-	private List<RodzajMuzyki> rodzajeMuzyki;// <f:selectItems
-							
-												// itemValue="#{rodzaj}" />
-	private RodzajMuzyki filtrRodzajMuzyki; // <p:selectOneMenu id="rodzajMuzyki"
-											// value="#{pierwszControll.filtrRodzajMuzyki}"
-											// converter="RodzajMuzykiKonwert" >
+	private List<RodzajMuzyki> rodzajeMuzyki;
+	private RodzajMuzyki filtrRodzajMuzyki; 
 	private String filtrWykonawcy;
 	private Short filtrRok;
 	private Short filtrRok1;
@@ -102,14 +102,20 @@ public class PierwszaControll implements Serializable {
 	///////////////////////////////////////////////////////////////////////////
 	
 
+public List<Album> znajdzAlbumy()
+{
+	
+	return albumService.znajdzWszystkie();
+}
+
+
 	public List<Wykonawca> listaWykonawcy(String tekst) {
 
 		if (tekst == null || tekst.isEmpty())
 			return new ArrayList<>();
 
 		List<Wykonawca> wykonawcy = wykonawcaService.findByNazwaStartingWith(tekst);
-		if (wykonawcy.isEmpty()) { // jezeli nie ma takiego rodzaju muzyki to go
-									// dodajemy itak do listy
+		if (wykonawcy.isEmpty()) { 
 			wykonawcy.add(new Wykonawca(tekst));
 		}
 
@@ -120,16 +126,10 @@ public class PierwszaControll implements Serializable {
 	public List<RodzajMuzyki> listaRodzajMuzyki(String tekst) {
 
 		if (tekst == null || tekst.isEmpty())
-			return new ArrayList<>();// dlaczego?
+			return new ArrayList<>();
 
 		List<RodzajMuzyki> lista = rodzajMuzykiService.findByNazwaStartingWith(tekst);
-		// jezli lista nie jest nullem i jesli lista nie jest pusta to usuwamy z
-		// wynikow obiekty z listy album-rodzaj muzyki
-		// if(album.getRodzajMuzyki() !=null &&
-		// !album.getRodzajMuzyki().isEmpty()){
-		// System.out.println("Usuwam liste rodzajow");
-		// lista.removeAll(album.getRodzajMuzyki());
-		// }
+		
 		return lista;
 
 	}
@@ -196,9 +196,16 @@ public class PierwszaControll implements Serializable {
 		System.out.println("Dodano sciezke");
 	}
 
-	public void inicjujUzytkownik() {
-		System.out.println("inicjuje uzytkownika");
-		uzytkownik = new Uzytkownik();
+	
+	public void dodajWydanieEdycja() {
+		// Dodaje do albumu wydanie
+		// album.getWydaniaAlbumu().add(wydanieAlbumu);
+		this.albumEdycja.dodajWydanie(wydanieAlbumu);
+		// czyszcze pole sciezka w kontrolrze
+		wydanieAlbumu = null;
+		// System.out.println("Dodano wydanie albumu");
+		dodajWydanieAlbumuSukces = true;
+		System.out.println("Dodano wydanie");
 	}
 
 	public void dodajWydanie() {

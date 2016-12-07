@@ -106,10 +106,7 @@ public class AlbumServiceImp implements AlbumService {
 			
 		}
 		else
-			// if(rodzajMuzyki==null&&rok==null&&wykonawcy!=null)
-			// return albumRepository.findBy... "%"+wykonawcy+"%" //abc ->%b%
-			// TODO Auto-generated method stub
-			// jezli wszytsko null to zwraca wszystko albumRepository.findAll();
+			
 			return albumRepository.findAll();
 
 	}

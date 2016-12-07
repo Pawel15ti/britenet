@@ -8,5 +8,6 @@ import pl.pawelozdoba.britenet.domain.WydanieAlbumu;
 
 public interface WydanieAlbumuRepository extends JpaRepository<WydanieAlbumu, Integer>{
 
+	
 	List<WydanieAlbumu> findByRokLike(Integer rok);
 }

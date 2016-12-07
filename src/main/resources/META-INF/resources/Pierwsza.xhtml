@@ -64,8 +64,11 @@
 
 
 
-			<p:commandButton id="edytujBtn" value="Edytuj" icon="ui-icon-minus" action="#{pierwszaControll.inicjujAlbumEdycja()}"
-				onclick="PF('edytuj').show();" process="@this" update=":edytujAlbumPopup" disabled="#{pierwszaControll.edytujButtonDisabled}" />
+			<p:commandButton id="edytujBtn" value="Edytuj" icon="ui-icon-minus"
+				action="#{pierwszaControll.inicjujAlbumEdycja()}"
+				onclick="PF('edytuj').show();" process="@this"
+				update=":edytujAlbumPopup"
+				disabled="#{pierwszaControll.edytujButtonDisabled}" />
 
 			<p:commandButton value="Podglad" icon="ui-icon-search"
 				onclick="PF('podglad').show();" type="button" />
@@ -74,9 +77,11 @@
 		</h:panelGrid>
 
 
-		<p:dataTable id="listaALbumy" value="#{pierwszaControll.albumy}" var="album" selectionMode="single" selection="#{pierwszaControll.zaznaczonyAlbum}" rowKey="#{album.id}">
-			<p:ajax event="rowSelect"  update="form:edytujBtn" />
-        	<p:ajax event="rowUnselect"  update="form:edytujBtn" />
+		<p:dataTable id="listaALbumy" value="#{pierwszaControll.albumy}"
+			var="album" selectionMode="single"
+			selection="#{pierwszaControll.zaznaczonyAlbum}" rowKey="#{album.id}">
+			<p:ajax event="rowSelect" update="form:edytujBtn" />
+			<p:ajax event="rowUnselect" update="form:edytujBtn" />
 			<p:column headerText="Id">
 				<h:outputText value="#{album.id}" />
 			</p:column>
@@ -141,15 +146,14 @@
 						onclick="PF('wydanie-dodaj').show();" update=":wydanieDodajPopup"
 						process="@this" />
 
-					<p:commandButton value="Edytuj" icon="ui-icon-minus"
-						onclick="PF('edytuj').show();" type="button" />
+					<p:commandButton id="edytujWydanie" value="Edytuj"
+						icon="ui-icon-minus" onclick="PF('edytuj').show();" type="button" />
 					<p:commandButton value="Podglad" icon="ui-icon-search"
 						onclick="PF('podglad').show();" type="button" />
 				</h:panelGrid>
 				<p:dataTable id="wydanieAlbumu"
 					value="#{pierwszaControll.album.wydaniaAlbumu}" var="wydanieAlbumu"
 					style="width:900px;">
-
 
 					<p:column headerText="Kraj">
 						<h:outputText value="#{wydanieAlbumu.kraj}">
@@ -218,7 +222,8 @@
 		</h:form>
 	</p:dialog>
 
-	<p:dialog header="Basic Dialog" widgetVar="edytuj" minHeight="40" modal="true">
+	<p:dialog header="Basic Dialog" widgetVar="edytuj" minHeight="40"
+		modal="true">
 		<h:form id="edytujAlbumPopup">
 			<h:inputHidden id="sukces"
 				value="#{pierwszaControll.edytujAlbumSukces}" />
@@ -226,7 +231,8 @@
 			<p:panel header="Dane podstawowe">
 				<h:panelGrid columns="2">
 					<p:outputLabel value="Tytuł" for="tytul" />
-					<p:inputText id="tytul" value="#{pierwszaControll.albumEdycja.tytul}" />
+					<p:inputText id="tytul"
+						value="#{pierwszaControll.albumEdycja.tytul}" />
 
 					<p:outputLabel value="Rodzaj muzyki" for="rodzajMuzyki" />
 					<p:autoComplete id="rodzajMuzyki" multiple="true"
@@ -259,17 +265,17 @@
 				<h:panelGrid columns="3">
 					<p:commandButton value="Dodaj" icon="ui-icon-circle-plus"
 						action="#{pierwszaControll.inicjujAlbumWydanie()}"
-						onclick="PF('wydanie-dodaj').show();" update=":wydanieDodajPopup"
+						onclick="PF('wydanie-dodaj-edycja').show();" update=":wydanieDodajPopupEdycja"
 						process="@this" />
 
-					<p:commandButton value="Edytuj" icon="ui-icon-minus"
-						onclick="PF('edytuj').show();" type="button" />
+					<p:commandButton id="edytujWydanie" value="Edytuj"
+						icon="ui-icon-minus" onclick="PF('edytuj').show();" type="button" />
 					<p:commandButton value="Podglad" icon="ui-icon-search"
 						onclick="PF('podglad').show();" type="button" />
 				</h:panelGrid>
 				<p:dataTable id="wydanieAlbumu"
-					value="#{pierwszaControll.albumEdycja.wydaniaAlbumu}" var="wydanieAlbumu"
-					style="width:900px;">
+					value="#{pierwszaControll.albumEdycja.wydaniaAlbumu}"
+					var="wydanieAlbumu" style="width:900px;">
 
 
 					<p:column headerText="Kraj">
@@ -300,18 +306,19 @@
 				<h:panelGrid columns="3">
 					<p:commandButton value="Dodaj" icon="ui-icon-circle-plus"
 						action="#{pierwszaControll.inicjujSciezke()}"
-						onclick="PF('sciezka-dodaj-edycja').show();" update=":sciezkaDodajPopupEdycja"
-						process="@this" />
+						onclick="PF('sciezka-dodaj-edycja').show();"
+						update=":sciezkaDodajPopupEdycja" process="@this" />
 
 
 
-					<p:commandButton value="Edytuj" icon="ui-icon-minus"
+					<p:commandButton value="Edytuj1" icon="ui-icon-minus"
 						onclick="PF('edytuj').show();" type="button" />
 					<p:commandButton value="Podglad" icon="ui-icon-search"
 						onclick="PF('podglad').show();" type="button" />
 				</h:panelGrid>
-				<p:dataTable id="sciezki" value="#{pierwszaControll.albumEdycja.sciezki}"
-					var="sciezka" style="width:900px;">
+				<p:dataTable id="sciezki"
+					value="#{pierwszaControll.albumEdycja.sciezki}" var="sciezka"
+					style="width:900px;">
 					<p:column headerText="Tytuł">
 						<h:outputText value="#{sciezka.tytul}">
 						</h:outputText>
@@ -377,8 +384,8 @@
 
 		</h:form>
 	</p:dialog>
-	
-	
+
+
 	<p:dialog header="Basic Dialog" widgetVar="sciezka-dodaj-edycja"
 		minHeight="40" modal="true">
 		<h:form id="sciezkaDodajPopupEdycja">
@@ -410,7 +417,7 @@
 
 		</h:form>
 	</p:dialog>
-	
+
 
 	<p:dialog header="Basic Dialog" widgetVar="wydanie-dodaj"
 		minHeight="40" modal="true">
@@ -442,6 +449,40 @@
 				action="#{pierwszaControll.dodajWydanie()}" ajax="true"
 				update="@form :dodajAlbumPopup:wydanieAlbumu" process="@form"
 				oncomplete="if(document.getElementById('wydanieDodajPopup:sukces').value=='true'){ PF('wydanie-dodaj').hide(); }" />
+		</h:form>
+
+	</p:dialog>
+	<p:dialog header="Basic Dialog" widgetVar="wydanie-dodaj-edycja"
+		minHeight="40" modal="true">
+		<h:form id="wydanieDodajPopupEdycja">
+			<h:inputHidden id="sukces"
+				value="#{pierwszaControll.dodajWydanieAlbumuSukces}"></h:inputHidden>
+			<h:messages />
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Kraj" for="kraj" />
+				<p:inputText id="kraj"
+					value="#{pierwszaControll.wydanieAlbumu.kraj}" />
+				<p:outputLabel value="Wydawca" for="wydawca" />
+				<p:inputText id="wydawca"
+					value="#{pierwszaControll.wydanieAlbumu.wydawca}" />
+				<p:outputLabel value="Rok" for="rok" />
+
+				<p:spinner id="rok" value="#{pierwszaControll.wydanieAlbumu.rok}"
+					min="1900" max="2016" />
+
+				<p:outputLabel value="Medium" for="medium" />
+				<p:inputText id="medium"
+					value="#{pierwszaControll.wydanieAlbumu.medium}" />
+				<p:outputLabel value="Opis" for="opis" />
+				<p:inputTextarea rows="6" cols="100" id="opis"
+					value="#{pierwszaControll.wydanieAlbumu.opis}" />
+
+			</h:panelGrid>
+			<p:commandButton value="Zapisz"
+				action="#{pierwszaControll.dodajWydanieEdycja()}" ajax="true"
+				update="@form :edytujAlbumPopup:wydanieAlbumu"
+				process="@form"
+				oncomplete="if(document.getElementById('wydanieDodajPopupEdycja:sukces').value=='true'){ PF('wydanie-dodaj-edycja').hide(); }" />
 
 
 		</h:form>
